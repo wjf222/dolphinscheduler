@@ -3,6 +3,7 @@ package org.apache.dolphinscheduler.plugin.registry.etcd;
 
 import io.etcd.jetcd.test.EtcdClusterExtension;
 import org.apache.dolphinscheduler.registry.api.Event;
+import org.apache.dolphinscheduler.registry.api.RegistryProperties;
 import org.apache.dolphinscheduler.registry.api.SubscribeListener;
 import org.junit.After;
 import org.junit.Assert;
@@ -26,9 +27,11 @@ public class EtcdRegistryTest {
 
     @Before
     public void before() {
+        RegistryProperties properties = new RegistryProperties();
         server = new EtcdClusterExtension("server",1);
         server.start();
-        registry = new EtcdRegistry();
+        registry = new EtcdRegistry(properties);
+        properties.getZookeeper().setConnectString(String.valueOf(server.getClientEndpoints()));
         registry.put("/sub", "", false);
     }
 
